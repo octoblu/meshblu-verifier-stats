@@ -1,13 +1,14 @@
-MeshbluVerifierStatsController = require './controllers/meshblu-verifier-stats-controller'
+StatsController = require './controllers/stats-controller'
 
 class Router
-  constructor: ({ @meshbluVerifierStatsService }) ->
-    throw new Error 'Missing meshbluVerifierStatsService' unless @meshbluVerifierStatsService?
+  constructor: ({ statsService }) ->
+    throw new Error 'Missing statsService' unless statsService?
+
+    @statsController = new StatsController { statsService }
 
   route: (app) =>
-    meshbluVerifierStatsController = new MeshbluVerifierStatsController { @meshbluVerifierStatsService }
 
-    app.get '/hello', meshbluVerifierStatsController.hello
+    app.post '/stats/:name', @statsController.create
     # e.g. app.put '/resource/:id', someController.update
 
 module.exports = Router
