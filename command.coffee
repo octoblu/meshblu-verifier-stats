@@ -1,18 +1,25 @@
 envalid        = require 'envalid'
-MeshbluConfig  = require 'meshblu-config'
+elasticsearch  = require 'elasticsearch'
 SigtermHandler = require 'sigterm-handler'
 Server         = require './src/server'
 
 envConfig = {
   PORT: envalid.num({ default: 80, devDefault: 3000 })
+  ELASTICSEARCH_INDEX: envalid.str()
+  ELASTICSEARCH_URI: envalid.url()
+  HTTP_USERNAME: envalid.str()
+  HTTP_PASSWORD: envalid.str()
 }
 
 class Command
   constructor: ->
     env = envalid.cleanEnv process.env, envConfig
     @serverOptions = {
-      meshbluConfig : new MeshbluConfig().toJSON()
       port          : env.PORT
+      elasticsearch:      elasticsearch.Client host: env.ELASTICSEARCH_URI
+      elasticsearchIndex: env.ELASTICSEARCH_INDEX
+      username: env.HTTP_USERNAME
+      password: env.HTTP_PASSWORD
     }
 
   panic: (error) =>
